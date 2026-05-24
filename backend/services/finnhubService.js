@@ -1,11 +1,4 @@
 const axios = require("axios");
-
-// ─────────────────────────────────────────────
-// DAY 5: In-memory cache
-// Prices are cached for 60 seconds so we don't
-// burn Finnhub API calls on every request
-// ─────────────────────────────────────────────
-
 const cache = {};
 const CACHE_TTL = 60000; // 60 seconds in ms
 
