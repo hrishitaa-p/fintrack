@@ -3,6 +3,22 @@ const router = express.Router();
 const { getStockPrice } = require("../services/finnhubService");
 const { getCryptoPrice } = require("../services/coingeckoService");
 
+const CRYPTO_SYMBOLS = ["BTC","ETH","SOL","DOGE","ADA","BNB","XRP","AVAX","DOT","MATIC"];
+
+router.get("/price/:symbol", async (req, res) => {
+  const { symbol } = req.params;
+  const isCrypto = req.query.type === "crypto" || CRYPTO_SYMBOLS.includes(symbol.toUpperCase());
+
+  try {
+    const data = isCrypto
+      ? await getCryptoPrice(symbol.toLowerCase())
+      : await getStockPrice(symbol.toUpperCase());
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/mock/stock/:symbol", (req, res) => {
   res.json({
     symbol: req.params.symbol.toUpperCase(),
