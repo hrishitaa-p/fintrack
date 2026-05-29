@@ -1,6 +1,10 @@
-node_modules/
+.DS_Store
+__pycache__/
+*.pyc
 .env
 
 # macOS
-.DS_Store
 Icon?
+
+portfolio.db
+node_modules/
