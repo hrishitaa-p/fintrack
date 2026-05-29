@@ -3,19 +3,6 @@ const router = express.Router();
 const { getStockPrice } = require("../services/finnhubService");
 const { getCryptoPrice } = require("../services/coingeckoService");
 
-// ─────────────────────────────────────────────
-// DAY 4: Portfolio P/L calculation
-//
-// POST /api/portfolio/calculate
-// Body: array of holdings
-// {
-//   "holdings": [
-//     { "symbol": "AAPL", "type": "stock",  "quantity": 2,    "buyPrice": 180 },
-//     { "symbol": "bitcoin", "type": "crypto", "quantity": 0.02, "buyPrice": 65000 }
-//   ]
-// }
-// ─────────────────────────────────────────────
-
 router.post("/portfolio/calculate", async (req, res) => {
   const { holdings } = req.body;
 

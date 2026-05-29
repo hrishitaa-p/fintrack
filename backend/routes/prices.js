@@ -3,10 +3,21 @@ const router = express.Router();
 const { getStockPrice } = require("../services/finnhubService");
 const { getCryptoPrice } = require("../services/coingeckoService");
 
-// ─────────────────────────────────────────────
-// DAY 1: Mock routes — lets teammate build
-//         frontend immediately, no API needed
-// ─────────────────────────────────────────────
+const CRYPTO_SYMBOLS = ["BTC","ETH","SOL","DOGE","ADA","BNB","XRP","AVAX","DOT","MATIC"];
+
+router.get("/price/:symbol", async (req, res) => {
+  const { symbol } = req.params;
+  const isCrypto = req.query.type === "crypto" || CRYPTO_SYMBOLS.includes(symbol.toUpperCase());
+
+  try {
+    const data = isCrypto
+      ? await getCryptoPrice(symbol.toLowerCase())
+      : await getStockPrice(symbol.toUpperCase());
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.get("/mock/stock/:symbol", (req, res) => {
   res.json({
@@ -30,11 +41,6 @@ router.get("/mock/crypto/:coinId", (req, res) => {
   });
 });
 
-// ─────────────────────────────────────────────
-// DAY 2: Real stock prices via Finnhub
-// Usage: GET /api/stock/AAPL
-// ─────────────────────────────────────────────
-
 router.get("/stock/:symbol", async (req, res) => {
   try {
     const data = await getStockPrice(req.params.symbol.toUpperCase());
@@ -44,11 +50,6 @@ router.get("/stock/:symbol", async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────
-// DAY 3: Real crypto prices via CoinGecko
-// Usage: GET /api/crypto/bitcoin
-// ─────────────────────────────────────────────
-
 router.get("/crypto/:coinId", async (req, res) => {
   try {
     const data = await getCryptoPrice(req.params.coinId.toLowerCase());
@@ -57,12 +58,6 @@ router.get("/crypto/:coinId", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-// ─────────────────────────────────────────────
-// Unified route — works for both types
-// Usage: GET /api/price/AAPL?type=stock
-//        GET /api/price/bitcoin?type=crypto
-// ─────────────────────────────────────────────
 
 router.get("/price/:symbol", async (req, res) => {
   const { symbol } = req.params;
